@@ -162,12 +162,13 @@ const PostDetailTemplate = ({ data, location }) => {
   const post = data.mdx
   const image = getImage(post.frontmatter.featuredImage)
   const tags = post.frontmatter.tags
+  const siteUrl = data.site.siteMetadata.siteUrl
 
   const [open, setOpen] = React.useState(false)
 
   const handleTooltipOpen = () => {
     setOpen(true)
-    navigator.clipboard.writeText(`https://j-c.io${location.pathname}`)
+    navigator.clipboard.writeText(`${siteUrl}${location.pathname}`)
     setTimeout(() => {
       setOpen(false)
     }, 700)
@@ -405,6 +406,7 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+        siteUrl
       }
     }
     mdx(id: { eq: $id }) {

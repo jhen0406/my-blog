@@ -18,6 +18,7 @@ const Seo = ({ description, lang, meta, title }) => {
           siteMetadata {
             title
             description
+            siteUrl
             social {
               twitter
             }
@@ -52,7 +53,7 @@ const Seo = ({ description, lang, meta, title }) => {
         },
         {
           property: `og:image`,
-          content: `https://j-c.io/og-image.png`,
+          content: `${site.siteMetadata.siteUrl}/og-image.png`,
         },
         {
           property: `og:type`,

@@ -1,6 +1,7 @@
 require("dotenv").config()
 
 module.exports = {
+  pathPrefix: `/my-blog`,
   siteMetadata: {
     title: `JC's blog`,
     author: {
@@ -8,7 +9,7 @@ module.exports = {
       summary: `前端工程師，技術筆記與生活分享。`,
     },
     description: `前端工程師，技術筆記與生活分享。`,
-    siteUrl: `https://j-c.io`,
+    siteUrl: `https://jhen0406.github.io/my-blog`,
     social: {
       linkedin: ``,
       github: `jhen0406`,
@@ -179,7 +180,7 @@ module.exports = {
               }
             `,
             output: "/rss.xml",
-            title: "j-c.io RSS Feed",
+            title: "JC's blog RSS Feed",
           },
         ],
       },
@@ -188,7 +189,7 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `JC Blog`,
-        short_name: `j-c.io`,
+        short_name: `JC Blog`,
         start_url: `/`,
         background_color: `#121212`,
         theme_color: `#121212`,
