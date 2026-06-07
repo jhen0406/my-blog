@@ -8,7 +8,7 @@ module.exports = {
       summary: `前端工程師，技術筆記與生活分享。`,
     },
     description: `前端工程師，技術筆記與生活分享。`,
-    siteUrl: `https://jc-blog.netlify.app`,
+    siteUrl: `https://jc-myblog.netlify.app`,
     social: {
       linkedin: ``,
       github: `jhen0406`,
