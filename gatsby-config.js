@@ -1,7 +1,6 @@
 require("dotenv").config()
 
 module.exports = {
-  pathPrefix: `/my-blog`,
   siteMetadata: {
     title: `JC's blog`,
     author: {
@@ -9,7 +8,7 @@ module.exports = {
       summary: `前端工程師，技術筆記與生活分享。`,
     },
     description: `前端工程師，技術筆記與生活分享。`,
-    siteUrl: `https://jhen0406.github.io/my-blog`,
+    siteUrl: `https://jc-blog.netlify.app`,
     social: {
       linkedin: ``,
       github: `jhen0406`,
