@@ -1,7 +1,6 @@
 import { Link } from "gatsby"
 import { default as React } from "react"
 
-// Utilities
 import kebabCase from "lodash/kebabCase"
 
 import Box from "@mui/material/Box"
@@ -15,28 +14,50 @@ import ListItemText from "@mui/material/ListItemText"
 import Typography from "@mui/material/Typography"
 
 import ArticleIcon from "@mui/icons-material/Article"
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import LocalOfferIcon from "@mui/icons-material/LocalOffer"
 
-import {
-  // connectStateResults,
-  Highlight,
-  Hits,
-  Index,
-  Snippet,
-} from "react-instantsearch-dom"
+const itemTextStyles = {
+  "> .MuiTypography-body2": {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    mr: 4,
+  },
+}
 
-// const HitCount = connectStateResults(({ searchResults }) => {
-//   const hitCount = searchResults && searchResults.nbHits
+const EmptyState = () => (
+  <Typography variant="body2" sx={{ color: "text.disabled", px: 3, py: 2 }}>
+    No results found
+  </Typography>
+)
 
-//   return hitCount > 0 ? (
-//     <span>
-//       {hitCount} result{hitCount !== 1 ? `s` : ``}
-//     </span>
-//   ) : null
-// })
+const ResultSection = ({ title, children }) => (
+  <>
+    <List
+      subheader={
+        <ListSubheader
+          component="div"
+          sx={{ background: "none", color: "text.disabled" }}
+        >
+          {title}
+        </ListSubheader>
+      }
+      sx={{
+        py: 1,
+        "& ul": {
+          padding: 0,
+          listStyle: "none",
+        },
+      }}
+    >
+      {children}
+    </List>
+    <Divider sx={{ mx: 2, ":last-of-type": { display: "none" } }} />
+  </>
+)
 
 const PageHit = ({ hit }) => (
-  <ListItemButton component={Link} to={hit.slug}>
+  <ListItemButton component={Link} to={hit.fields.slug}>
     <ListItemIcon
       sx={{
         minWidth: "2.5rem",
@@ -57,25 +78,14 @@ const PageHit = ({ hit }) => (
     <ListItemText
       primary={
         <>
-          <Highlight attribute="title" hit={hit} tagName="mark" />
+          {hit.frontmatter.title}
           <Typography sx={{ color: "text.disabled", display: "inline" }}>
-            －<Snippet attribute="date" hit={hit} />
+            －{hit.frontmatter.date}
           </Typography>
         </>
       }
-      secondary={<Snippet attribute="description" hit={hit} tagName="mark" />}
-      sx={{
-        "* > mark": {
-          backgroundColor: "unset",
-          color: "primary.main",
-        },
-        "> .MuiTypography-body2": {
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          mr: 4,
-        }
-      }}
+      secondary={hit.frontmatter.description || hit.excerpt}
+      sx={itemTextStyles}
     />
   </ListItemButton>
 )
@@ -102,53 +112,32 @@ const TagHit = ({ hit }) => (
     <ListItemText
       primary={
         <>
-          <Highlight attribute="fieldValue" hit={hit} tagName="mark" />
+          {hit.fieldValue}
           <Typography sx={{ color: "text.disabled", display: "inline" }}>
-            －<Snippet attribute="totalCount" hit={hit} />
+            －{hit.totalCount}
           </Typography>
         </>
       }
-      sx={{
-        "* > mark": {
-          backgroundColor: "unset",
-          color: "primary.main",
-        },
-      }}
     />
   </ListItemButton>
 )
 
-const HitsInIndex = ({ index }) => (
-  <Index indexName={index.name}>
-    <List
-      subheader={
-        <ListSubheader
-          component="div"
-          id="nested-list-subheader"
-          sx={{ background: "none", color: "text.disabled" }}
-        >
-          {index.name}
-        </ListSubheader>
-      }
-      sx={{
-        py: 1,
-        "& ul": {
-          padding: 0,
-          listStyle: "none",
-        },
-      }}
-    >
-      <Hits hitComponent={index.name === "Stories" ? PageHit : TagHit} />
-    </List>
-    <Divider sx={{ mx: 2, ":last-of-type": { display: "none" } }} />
-  </Index>
-)
-
-const SearchResult = ({ indices }) => (
+const SearchResult = ({ storyResults, tagResults }) => (
   <Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
-    {indices.map(index => (
-      <HitsInIndex index={index} key={index.name} />
-    ))}
+    <ResultSection title="Stories">
+      {storyResults.length > 0 ? (
+        storyResults.map(hit => <PageHit hit={hit} key={hit.id} />)
+      ) : (
+        <EmptyState />
+      )}
+    </ResultSection>
+    <ResultSection title="Tags">
+      {tagResults.length > 0 ? (
+        tagResults.map(hit => <TagHit hit={hit} key={hit.fieldValue} />)
+      ) : (
+        <EmptyState />
+      )}
+    </ResultSection>
   </Box>
 )
 

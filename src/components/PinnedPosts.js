@@ -7,7 +7,7 @@ import Box from "@mui/material/Box"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 
-import PushPinIcon from '@mui/icons-material/PushPin';
+import ArticleIcon from "@mui/icons-material/Article"
 
 const ClampTypography = {
   overflow: "hidden",
@@ -18,14 +18,20 @@ const ClampTypography = {
   WebkitBoxOrient: "vertical",
 }
 
-const ComponentName = () => (
+const RecentPosts = () => (
   <StaticQuery
+  // 原本：allMdx(filter: { frontmatter: { pinned: { eq: true } } })  篩選文章中 pinned = true 的文章
+  // 改成由日期新到舊篩選五篇
     query={graphql`
       {
-        allMdx(filter: { frontmatter: { pinned: { eq: true } } }) {
+        allMdx(
+          sort: { fields: [frontmatter___date], order: DESC } 
+          limit: 5
+        ) {
           nodes {
             frontmatter {
               title
+              date(formatString: "MMMM DD, YYYY")
               description
               featuredImage {
                 childImageSharp {
@@ -34,7 +40,9 @@ const ComponentName = () => (
               }
             }
             timeToRead
-            slug
+            fields {
+              slug
+            }
           }
         }
       }
@@ -57,16 +65,16 @@ const ComponentName = () => (
             lineHeight: "20px",
           }}
         >
-          Pinned Stories
+          近期發布
         </Typography>
         <Stack spacing={3}>
           {data.allMdx.nodes.map(item => {
             if (!item) return null
             return (
               <Box
-                key={item.slug}
+                key={item.fields.slug}
                 component={Link}
-                to={`/${item.slug}`}
+                to={item.fields.slug}
                 rel={item}
                 sx={{
                   textDecoration: "none",
@@ -84,7 +92,7 @@ const ComponentName = () => (
                     sx={{ color: "text.secondary", display: "flex", alignItems: "center" }}
                     gutterBottom
                   >
-                    <PushPinIcon fontSize="inherit"/>&nbsp;{`Pinned • ${item.timeToRead}`} min read
+                    <ArticleIcon fontSize="inherit"/>&nbsp;{`${item.frontmatter.date} • ${item.timeToRead}`} min read
                   </Typography>
                   <Typography
                     variant="body1"
@@ -112,7 +120,7 @@ const ComponentName = () => (
                 <Box sx={{ width: "100%", maxWidth: "55px" }}>
                   <GatsbyImage
                     image={getImage(item.frontmatter.featuredImage)}
-                    alt={item.frontmatter.featuredImage.name}
+                    alt={item.frontmatter.featuredImage?.name}
                     style={{borderRadius: "4px"}}
                   />
                 </Box>
@@ -125,4 +133,4 @@ const ComponentName = () => (
   ></StaticQuery>
 )
 
-export default ComponentName
+export default RecentPosts

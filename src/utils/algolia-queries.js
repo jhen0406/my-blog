@@ -13,10 +13,12 @@ const pageQuery = `{
     edges {
       node {
         id
+        excerpt(pruneLength: 500)
         frontmatter {
           title
           date(formatString: "l")
           description
+          category
           tags
         }
         fields {
@@ -37,12 +39,27 @@ const pageQueryTags = `{
   }
 }`
 
+function splitCjkCharacters(text = "") {
+  return String(text).match(/[\u3400-\u9fff]/g)?.join(" ") || ""
+}
+
 function pageToAlgoliaRecord({ node: { id, frontmatter, fields, ...rest } }) {
+  const searchableText = [
+    frontmatter.title,
+    frontmatter.description,
+    frontmatter.category,
+    frontmatter.tags?.join(" "),
+    rest.excerpt,
+  ]
+    .filter(Boolean)
+    .join(" ")
+
   return {
     objectID: id,
     ...frontmatter,
     ...fields,
     ...rest,
+    searchText: `${searchableText} ${splitCjkCharacters(searchableText)}`,
   }
 }
 
@@ -59,7 +76,18 @@ const queries = [
     query: pageQuery,
     transformer: ({ data }) => data.pages.edges.map(pageToAlgoliaRecord),
     indexName,
-    settings: { attributesToSnippet: [`description:20`, `date`, `tags`] },
+    settings: {
+      searchableAttributes: [
+        `title`,
+        `tags`,
+        `category`,
+        `description`,
+        `excerpt`,
+        `searchText`,
+      ],
+      queryLanguages: [`zh`],
+      attributesToSnippet: [`description:20`, `excerpt:30`, `date`, `tags`, `category`],
+    },
     
   },
   {

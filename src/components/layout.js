@@ -17,7 +17,6 @@ import MuiLink from "@mui/material/Link"
 
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined"
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import ForkRightIcon from '@mui/icons-material/ForkRight';
 
@@ -158,8 +157,8 @@ const Layout = ({
                     >
                       {isRootPath && (
                         <Avatar
-                          alt="Brian Ruiz"
-                          src="https://www.b-r.io/avatar.png"
+                          alt="Judy Cheng"
+                          src="../usagi.jpeg"
                           sx={{
                             width: 48,
                             height: 48,
@@ -173,7 +172,7 @@ const Layout = ({
                             },
                           }}
                         >
-                          BR
+                          JC
                         </Avatar>
                       )}
 
@@ -195,11 +194,6 @@ const Layout = ({
                       </Typography>
                     </Box>
 
-                    {title && (
-                      <IconButton sx={{ height: "fit-content" }}>
-                        <MoreHorizIcon alt="More" />
-                      </IconButton>
-                    )}
                   </Box>
                 </Container>
                 <main style={{ minHeight: "calc((100vh - 360px) - 116px)" }}>
@@ -225,7 +219,7 @@ const Layout = ({
                         },
                       }}
                     >
-                      <Box>
+                      {/* <Box>
                         <Box
                           sx={{
                             display: "flex",
@@ -266,7 +260,7 @@ const Layout = ({
                           to stay up to date on new posts and more. P.S. No
                           spam, unsubscribe any time.
                         </Typography>
-                      </Box>
+                      </Box> */}
                       {extraFooterContent}
                       <Divider sx={{ my: "2rem" }} />
                       <Box
@@ -280,7 +274,6 @@ const Layout = ({
                           component={Link}
                           underline="none"
                           sx={{ color: "text.disabled" }}
-                          to="https://github.com/BrianRuizy/gatsby-medium-blog"
                           target="_blank"
                         >
                           <Typography
@@ -288,7 +281,7 @@ const Layout = ({
                             sx={{ display: "flex", alignItems: "center" }}
                           >
                             Gatsby Medium Blog
-                            <StarBorderIcon
+                            {/* <StarBorderIcon
                               alt="Github stars"
                               sx={{ ml: 0.5, fontSize: "16px" }}
                             />
@@ -296,8 +289,8 @@ const Layout = ({
                             <ForkRightIcon
                               alt="Github forks"
                               sx={{ ml: 0.25, fontSize: "16px" }}
-                            />
-                            {githubForks}
+                            /> */}
+                            {/* {githubForks} */}
                           </Typography>
                         </MuiLink>
                         <Typography variant="body2">

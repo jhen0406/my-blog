@@ -1,6 +1,5 @@
-import { createRef, default as React, useState, useMemo } from "react"
-import algoliasearch from "algoliasearch/lite"
-import { InstantSearch } from "react-instantsearch-dom"
+import { createRef, default as React, useMemo, useState } from "react"
+import { graphql, useStaticQuery } from "gatsby"
 
 import SearchBox from "./search-box"
 import SearchResult from "./search-result"
@@ -9,19 +8,67 @@ import useClickOutside from "./use-click-outside"
 import Box from "@mui/material/Box"
 import Dialog from "@mui/material/Dialog"
 
+function normalize(text = "") {
+  return String(text).toLowerCase()
+}
+
 export default function SearchDialog({ open, handleClose }) {
-  const searchIndices = [{ name: `Stories`, title: `Stories` }, { name: `Tags`, title: `Tags` }]
+  const data = useStaticQuery(graphql`
+    {
+      allMdx(sort: { fields: [frontmatter___date], order: DESC }, limit: 200) {
+        nodes {
+          id
+          excerpt(pruneLength: 160)
+          fields {
+            slug
+          }
+          frontmatter {
+            title
+            description
+            category
+            tags
+            date(formatString: "M/D/YYYY")
+          }
+        }
+        group(field: frontmatter___tags) {
+          fieldValue
+          totalCount
+        }
+      }
+    }
+  `)
   const rootRef = createRef()
-  const [query, setQuery] = useState()
+  const [query, setQuery] = useState("")
   const [hasFocus, setFocus] = useState(false)
-  const searchClient = useMemo(
-    () =>
-      algoliasearch(
-        process.env.GATSBY_ALGOLIA_APP_ID,
-        process.env.GATSBY_ALGOLIA_SEARCH_KEY
-      ),
-    []
-  )
+  const trimmedQuery = query.trim()
+  const normalizedQuery = normalize(trimmedQuery)
+  const storyResults = useMemo(() => {
+    if (!normalizedQuery) return []
+
+    return data.allMdx.nodes.filter(post => {
+      const frontmatter = post.frontmatter
+      const searchableText = [
+        frontmatter.title,
+        frontmatter.description,
+        frontmatter.category,
+        frontmatter.tags?.join(" "),
+        post.excerpt,
+      ]
+        .filter(Boolean)
+        .join(" ")
+
+      return normalize(searchableText).includes(normalizedQuery)
+    })
+  }, [data.allMdx.nodes, normalizedQuery])
+
+  const tagResults = useMemo(() => {
+    if (!normalizedQuery) return []
+
+    return data.allMdx.group.filter(tag =>
+      normalize(tag.fieldValue).includes(normalizedQuery)
+    )
+  }, [data.allMdx.group, normalizedQuery])
+
   useClickOutside(rootRef, () => setFocus(false))
 
   return (
@@ -49,21 +96,17 @@ export default function SearchDialog({ open, handleClose }) {
       }}
     >
       <Box ref={rootRef}>
-        <InstantSearch
-          searchClient={searchClient}
-          indexName={searchIndices[0].name}
-          onSearchStateChange={({ query }) => setQuery(query)}
-        >
-          <SearchBox
-            onFocus={() => setFocus(true)}
-            hasFocus={hasFocus}
-            handleClose={handleClose}
-          />
+        <SearchBox
+          query={query}
+          setQuery={setQuery}
+          onFocus={() => setFocus(true)}
+          hasFocus={hasFocus}
+          handleClose={handleClose}
+        />
 
-          {query && query.length > 0 && (
-            <SearchResult indices={searchIndices} />
-          )}
-        </InstantSearch>
+        {trimmedQuery.length > 0 && (
+          <SearchResult storyResults={storyResults} tagResults={tagResults} />
+        )}
       </Box>
     </Dialog>
   )

@@ -55,6 +55,7 @@ function a11yProps(index) {
 const Index = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const posts = data.allMdx.nodes
+  const categories = data.allMdx.group
 
   const [value, setValue] = React.useState(0)
   const handleChange = (event, newValue) => {
@@ -116,7 +117,7 @@ const Index = ({ data, location }) => {
             }}
           >
             <Tab
-              label="Blog"
+              label="全部文章"
               {...a11yProps(0)}
               sx={{
                 textTransform: "capitalize",
@@ -125,29 +126,19 @@ const Index = ({ data, location }) => {
                 "&.Mui-selected": { color: "text.primary" },
               }}
             />
-            
-            <Tab
-              label="Gear List"
-              component="a"
-              href="/gear"
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: 400,
-                minWidth: "60px",
-                "&.Mui-selected": { color: "text.primary" },
-              }}
-            />
-            <Tab
-              label="My Links"
-              component="a"
-              href="/links"
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: 400,
-                minWidth: "60px",
-                "&.Mui-selected": { color: "text.primary" },
-              }}
-            />
+            {categories.map((category, index) => (
+              <Tab
+                key={category.fieldValue}
+                label={category.fieldValue}
+                {...a11yProps(index + 1)}
+                sx={{
+                  textTransform: "capitalize",
+                  fontWeight: 400,
+                  minWidth: "60px",
+                  "&.Mui-selected": { color: "text.primary" },
+                }}
+              />
+            ))}
           </Tabs>
         </Box>
         
@@ -174,11 +165,11 @@ const Index = ({ data, location }) => {
         </TabPanel>
 
         {/* categories panels */}
-        {data.allMdx.group.map((category, index) => (
+        {categories.map((category, index) => (
           <TabPanel value={value} index={index + 1} key={category.fieldValue}>
-            {posts.map(post => {
-              if (post.frontmatter.category === category.fieldValue) {
-                return (
+            {posts
+              .filter(post => post.frontmatter.category === category.fieldValue)
+              .map(post => (
                   <Grid
                     item
                     xs={12}
@@ -188,17 +179,14 @@ const Index = ({ data, location }) => {
                     }}
                   >
                     <Post data={post} />
-                  <Divider
+                    <Divider
                       sx={{
                         pt: 4,
                         "@media (max-width: 600px)": { pt: "1.5rem" },
                       }}
                     />
                   </Grid>
-                )
-              }
-              return
-            })}
+              ))}
           </TabPanel>
         ))}
       </Container>

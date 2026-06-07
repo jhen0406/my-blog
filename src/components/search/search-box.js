@@ -1,5 +1,4 @@
 import React from "react"
-import { connectSearchBox } from "react-instantsearch-dom"
 
 import InputAdornment from '@mui/material/InputAdornment';
 import Button from '@mui/material/Button';
@@ -7,9 +6,9 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 
 
-export default connectSearchBox(
-  ({ refine, currentRefinement, onFocus, handleClose }) => (
-    <form>
+export default function SearchBox({ query, setQuery, onFocus, handleClose }) {
+  return (
+    <form onSubmit={event => event.preventDefault()}>
       <TextField
         fullWidth
         autoFocus
@@ -18,8 +17,8 @@ export default connectSearchBox(
         type="text"
         placeholder="Search Posts"
         aria-label="Search"
-        onChange={e => refine(e.target.value)}
-        value={currentRefinement}
+        onChange={e => setQuery(e.target.value)}
+        value={query}
         onFocus={onFocus}
         InputProps={{
           style: { fontSize: 16 },
@@ -54,4 +53,4 @@ export default connectSearchBox(
       />
     </form>
   )
-)
+}

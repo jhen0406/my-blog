@@ -2,7 +2,6 @@ import * as React from "react"
 import { useCallback, useEffect } from "react"
 
 import PinnedPosts from "./PinnedPosts"
-import Socials from "./socials"
 import SearchDialog from "./search/search-dialog"
 
 import Box from "@mui/material/Box"
@@ -87,7 +86,7 @@ export default function PanelRight({ extraDrawerContent }) {
                 gap: 2,
               }}
             >
-              <Button
+              {/* <Button
                 variant="contained"
                 disableElevation
                 fullWidth
@@ -105,7 +104,7 @@ export default function PanelRight({ extraDrawerContent }) {
                 }}
               >
                 Contact Me
-              </Button>
+              </Button> */}
               <Button
                 variant="outlined"
                 fullWidth
@@ -142,11 +141,11 @@ export default function PanelRight({ extraDrawerContent }) {
               >
                 <Box display={"flex"} gap={2} alignItems={"center"}>
                   <Avatar
-                    alt="Brian Ruiz"
-                    src="https://www.b-r.io/avatar.png"
+                    alt="Judy Cheng"
+                    src="../usagi.jpeg"
                     sx={{ width: 64, height: 64, backgroundColor: "divider" }}
                   >
-                    BR
+                    JC
                   </Avatar>
                   <div>
                     <Typography
@@ -159,7 +158,7 @@ export default function PanelRight({ extraDrawerContent }) {
                         color: "text.primary",
                       }}
                     >
-                      Brian Ruiz
+                      Judy Cheng
                     </Typography>
                     <Typography variant="body2" sx={{ color: "text.disabled" }}>
                       Software Engineer
@@ -167,15 +166,12 @@ export default function PanelRight({ extraDrawerContent }) {
                   </div>
                 </Box>
                 <Typography variant="body2" sx={{  color: "text.secondary" }}>
-                  I'm a full-stack Software Engineer based out of Houston, TX. 
-                  Here you'll find my personal blog posts and case studies 
-                  on all things tech.
+                  現職前端工程師，紀錄一些學習的筆記與心得。
                 </Typography>
               </Box>
             )}
             {extraDrawerContent ? null : <PinnedPosts />}
             {extraDrawerContent}
-            <Socials />
           </Box>
         </Box>
       </Box>

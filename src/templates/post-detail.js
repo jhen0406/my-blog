@@ -146,7 +146,7 @@ function MoreStories(props) {
               <Box sx={{ width: "100%", maxWidth: "55px" }}>
                 <GatsbyImage
                   image={getImage(item.frontmatter.featuredImage)}
-                  alt={item.frontmatter.featuredImage.name}
+                  alt={item.frontmatter.featuredImage?.name}
                   style={{ borderRadius: "4px", aspectRatio: 1 }}
                 />
               </Box>
@@ -167,7 +167,7 @@ const PostDetailTemplate = ({ data, location }) => {
 
   const handleTooltipOpen = () => {
     setOpen(true)
-    navigator.clipboard.writeText(`https://b-r.io${location.pathname}`)
+    navigator.clipboard.writeText(`https://j-c.io${location.pathname}`)
     setTimeout(() => {
       setOpen(false)
     }, 700)
@@ -246,8 +246,8 @@ const PostDetailTemplate = ({ data, location }) => {
             >
               <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                 <Avatar
-                  alt="Brian Ruiz"
-                  src="../avatar.png"
+                  alt="Judy Cheng"
+                  src="../usagi.jpeg"
                   sx={{
                     width: 48,
                     height: 48,
@@ -258,10 +258,10 @@ const PostDetailTemplate = ({ data, location }) => {
                     },
                   }}
                 >
-                  BR
+                  JC
                 </Avatar>
                 <Stack>
-                  <Typography variant="body1">Brian Ruiz</Typography>
+                  <Typography variant="body1">Judy Cheng</Typography>
                   <Typography color="text.secondary" variant="body2">
                     {post.frontmatter.date}
                     <Box
@@ -320,7 +320,7 @@ const PostDetailTemplate = ({ data, location }) => {
                   }}
                 >
                   <Provider
-                    apiKey="pt_9aaebf23b47b7acc590ce3fbcae458"
+                    apiKey={process.env.GATSBY_LYKET_API_KEY}
                     theme={{
                       colors: {
                         primary: "inherit",
@@ -381,7 +381,7 @@ const PostDetailTemplate = ({ data, location }) => {
             >
               <GatsbyImage
                 image={image}
-                alt={post.frontmatter.featuredImage.name}
+                alt={post.frontmatter.featuredImage?.name}
               />
             </Box>
           </header>

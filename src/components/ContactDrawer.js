@@ -21,7 +21,7 @@ export default function ContactDrawer(props) {
     >
       <Container maxWidth="sm">
         <form
-          action="https://getform.io/f/faf8d119-4334-4fcc-ae56-2dc4de9cb453"
+          action="https://getform.io/f/3zep13l3wxs"
           method="POST"
         >
           <Box
@@ -46,7 +46,7 @@ export default function ContactDrawer(props) {
               >
                 Have any questions, feedback or want to say hi? Fill the form,
                 or{" "}
-                <Link href="mailto:brianruiz0123@gmail.com" color={"inherit"}>
+                <Link href="mailto:lighters0406@gmail.com" color={"inherit"}>
                   email me
                 </Link>{" "}
                 whenever convenient.

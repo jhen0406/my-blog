@@ -2,18 +2,18 @@ require("dotenv").config()
 
 module.exports = {
   siteMetadata: {
-    title: `Brian Ruiz`,
+    title: `JC's blog`,
     author: {
-      name: `Brian Ruiz`,
-      summary: `Brian Ruiz is a Software Engineer based out of Houston, TX.`,
+      name: `JC`,
+      summary: `前端工程師，技術筆記與生活分享。`,
     },
-    description: `Brian Ruiz is a Software Engineer based out of Houston, TX.`,
-    siteUrl: `https://b-r.io`,
+    description: `前端工程師，技術筆記與生活分享。`,
+    siteUrl: `https://j-c.io`,
     social: {
-      linkedin: `brianruizy`,
-      github: `BrianRuizy`,
-      instagram: `brianruizy`,
-      youtube: `UCCIFp-Se_xjfYc94H04oK7Q`,
+      linkedin: ``,
+      github: `jhen0406`,
+      instagram: ``,
+      youtube: ``,
     },
   },
   plugins: [
@@ -127,7 +127,7 @@ module.exports = {
     {
       resolve: "gatsby-plugin-google-tagmanager",
       options: {
-        id: "GTM-K349R6N",
+        id: "GTM-NLWJWB9J",
         includeInDevelopment: false,
       },
     },
@@ -179,7 +179,7 @@ module.exports = {
               }
             `,
             output: "/rss.xml",
-            title: "b-r.io RSS Feed",
+            title: "j-c.io RSS Feed",
           },
         ],
       },
@@ -187,11 +187,11 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `BR Blog`,
-        short_name: `b-r.io`,
+        name: `JC Blog`,
+        short_name: `j-c.io`,
         start_url: `/`,
         background_color: `#121212`,
-        theme_color: `???`,
+        theme_color: `#121212`,
         display: `standalone`,
         icon: "src/images/gatsby-icon.png",
         icons : [
@@ -214,13 +214,13 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     `gatsby-plugin-offline`,
-    {
-      resolve: `gatsby-plugin-algolia`,
-      options: {
-        appId: process.env.GATSBY_ALGOLIA_APP_ID,
-        apiKey: process.env.ALGOLIA_ADMIN_KEY,
-        queries: require("./src/utils/algolia-queries")
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-algolia`,
+    //   options: {
+    //     appId: process.env.GATSBY_ALGOLIA_APP_ID,
+    //     apiKey: process.env.ALGOLIA_ADMIN_KEY,
+    //     queries: require("./src/utils/algolia-queries")
+    //   },
+    // },
   ],
 }
