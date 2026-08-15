@@ -32,3 +32,29 @@ img {
 .gatsby-resp-image-image {
   box-shadow: none !important;
 }
+
+.note-block {
+  background-color: #f5f5f5;
+  color: #222;
+  padding: 20px 40px;
+  border-radius: 8px;
+  margin: 40px 0;
+}
+
+.note-block h3 {
+  color: inherit;
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.note-block p {
+  color: inherit;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+body.dark-mode .note-block {
+  background-color: #2a2a2a;
+  color: #ddd;
+}
