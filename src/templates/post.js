@@ -117,7 +117,7 @@ const PostItem = ({ data }) => {
                 />
               )}
               <Typography sx={{ color: "text.secondary" }} variant="body2">
-                {`${data.timeToRead} min read`}
+                {`${data.chineseTimeToRead} min read`}
               </Typography>
             </Box>
           </Box>

@@ -213,7 +213,7 @@ export const pageQuery = graphql`
         fields {
           slug
         }
-        timeToRead
+        chineseTimeToRead
         frontmatter {
           category
           date(formatString: "MMMM DD, YYYY")

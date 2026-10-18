@@ -39,7 +39,7 @@ const RecentPosts = () => (
                 }
               }
             }
-            timeToRead
+            chineseTimeToRead
             fields {
               slug
             }
@@ -92,7 +92,7 @@ const RecentPosts = () => (
                     sx={{ color: "text.secondary", display: "flex", alignItems: "center" }}
                     gutterBottom
                   >
-                    <ArticleIcon fontSize="inherit"/>&nbsp;{`${item.frontmatter.date} • ${item.timeToRead}`} min read
+                    <ArticleIcon fontSize="inherit"/>&nbsp;{`${item.frontmatter.date} • ${item.chineseTimeToRead}`} min read
                   </Typography>
                   <Typography
                     variant="body1"

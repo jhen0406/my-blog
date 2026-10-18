@@ -150,7 +150,7 @@ export const pageQuery = graphql`
           fields {
             slug
           }
-          timeToRead
+          chineseTimeToRead
           frontmatter {
             date(formatString: "MMMM DD, YYYY")
             title

@@ -124,6 +124,7 @@ exports.createSchemaCustomization = ({ actions }) => {
     type Mdx implements Node {
       frontmatter: Frontmatter
       fields: Fields
+      chineseTimeToRead: Int!
     }
 
     type Frontmatter {
@@ -138,3 +139,52 @@ exports.createSchemaCustomization = ({ actions }) => {
   `)
 }
 
+/**
+ * 計算中英文混合文章的閱讀時間。
+ *
+ * 中文：每分鐘約 400 字
+ * 英文：每分鐘約 200 個單字
+ */
+const calculateReadingTime = rawBody => {
+  if (!rawBody) {
+    return 1
+  }
+
+  // 移除 frontmatter，避免標題、日期、tags 被計算
+  const content = rawBody
+    .replace(/^---[\s\S]*?---/, "")
+    // 移除 fenced code block
+    .replace(/```[\s\S]*?```/g, "")
+    // 移除 JSX／HTML 標籤，但保留標籤中的文字
+    .replace(/<[^>]+>/g, "")
+    // 移除 Markdown 圖片
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    // Markdown 連結只保留顯示文字
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+
+  // 計算中文漢字
+  const chineseCharacters =
+    content.match(/\p{Script=Han}/gu)?.length ?? 0
+
+  // 先移除中文，再計算英文單字
+  const englishWords = content
+    .replace(/\p{Script=Han}/gu, " ")
+    .match(/[A-Za-z0-9]+(?:['-][A-Za-z0-9]+)*/g)?.length ?? 0
+
+  const chineseMinutes = chineseCharacters / 400
+  const englishMinutes = englishWords / 200
+
+  // 不滿一分鐘仍顯示一分鐘
+  return Math.max(1, Math.ceil(chineseMinutes + englishMinutes))
+}
+
+exports.createResolvers = ({ createResolvers }) => {
+  createResolvers({
+    Mdx: {
+      chineseTimeToRead: {
+        type: `Int!`,
+        resolve: source => calculateReadingTime(source.rawBody),
+      },
+    },
+  })
+}

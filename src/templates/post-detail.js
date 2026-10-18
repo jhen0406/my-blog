@@ -123,7 +123,7 @@ function MoreStories(props) {
                   sx={{ color: "text.secondary" }}
                   gutterBottom
                 >
-                  {`${item.frontmatter.date} • ${item.timeToRead}`} min read
+                  {`${item.frontmatter.date} • ${item.chineseTimeToRead}`} min read
                 </Typography>
                 <Typography
                   variant="body1"
@@ -273,7 +273,7 @@ const PostDetailTemplate = ({ data, location }) => {
                         },
                       }}
                     >
-                      &nbsp;&bull;&nbsp;{post.timeToRead + " min read"}
+                      &nbsp;&bull;&nbsp;{post.chineseTimeToRead + " min read"}
                     </Box>
                   </Typography>
                 </Stack>
@@ -413,7 +413,7 @@ export const pageQuery = graphql`
       id
       excerpt(pruneLength: 160)
       body
-      timeToRead
+      chineseTimeToRead
       slug
       frontmatter {
         title
@@ -432,7 +432,7 @@ export const pageQuery = graphql`
       fields {
         slug
       }
-      timeToRead
+      chineseTimeToRead
       frontmatter {
         title
         date(formatString: "MMM, YYYY")
@@ -449,7 +449,7 @@ export const pageQuery = graphql`
       fields {
         slug
       }
-      timeToRead
+      chineseTimeToRead
       frontmatter {
         title
         date(formatString: "MMM, YYYY")
