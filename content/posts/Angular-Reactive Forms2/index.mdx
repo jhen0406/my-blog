@@ -1,0 +1,250 @@
+---
+title: "Angular Reactive Forms Ⅱ：巢狀結構與常用方法"
+description: ""
+date: "2026-11-25T00:00:00.000Z"
+category: "技術筆記"
+tags: ["Angular", "前端"]
+featuredImage: "./image.jpeg"
+pinned: true
+---
+
+圖片來源：https://dev.to/naira_gezhoyan/unlock-the-power-of-angular-reactive-forms-4m32
+
+## 巢狀結構介紹
+
+由上圖可知，Reactive Forms 是由 form control、form group、form array 組成的巢狀結構。
+
+- form control：表單的單一控制項，可個別追蹤其值與驗證狀態。
+- form array：由多個控制項組成的陣列，以索引追蹤其值與驗證狀態。
+- form group：多個控制項組成一組，例如一張表單就是一個 form group，以組為單位追蹤值與驗證狀態。form group 也可以嵌套在另一個 form group 下。
+
+三者的基底類別皆為 `AbstractControl`。
+
+## 常用工具與方法  
+
+### 控制 enabled / disabled 狀態：enable() / disable()
+
+無論是 HTML 原生還是各大元件庫，都有 disabled 屬性可以控制元件是否可編輯。但表單越複雜，每個元件都要透過這個屬性調整，程式碼會過於繁瑣。  
+
+Reactive Forms 也有相同功能，除了以 form group 為單位，也可以針對單一 form control 設定。例如在檢視狀態時，可以直接使用 this.form.disable() 讓整張表單不可編輯。
+
+### 獲得表單值：value / getRawValue()
+
+可以透過 `this.form.value` 或 `this.form.getRawValue()` 取得整個 form 當前的值，包含其下所有 form control 與 form array。  
+
+兩者差異在於：若有控制項被設為 disabled，`this.form.value` 不會包含該控制項的值；`this.form.getRawValue()` 則無論控制項是否 disabled，都會完整輸出整個 form 的值。
+
+### 更新表單值：setValue() vs. patchValue()
+
+更新表單值會使用 `setValue()` 或 `patchValue()`，兩者差異在於傳入的值是否需要完整。
+
+`setValue()` 須更新 form group 或 form array 的所有控制項，傳入的物件結構需與表單模型完全相同，不完整則會報錯。
+
+`patchValue()` 較彈性，只需傳入要更新的控制項，缺少的欄位會自動忽略，不會報錯。
+
+### 替換或新增控制項：setControl() vs. addControl()
+
+setValue() 與 patchValue() 更新的是控制項的「值」，若要更新控制項本身，則使用 `setControl()` 或 `addControl()`。
+
+`addControl()` 用於新增控制項，若名稱已存在，不會覆蓋既有的控制項。
+
+`setControl()` 可新增或替換控制項，若名稱已存在，會以新的控制項替換同名控制項。
+
+### 表單重置：reset()
+
+例如送出後要將表單恢復成未填寫的狀態，可以使用 `this.form.reset()`，會將所有控制項的值設為 null（若控制項建立時設定了 nonNullable: true，則會恢復成初始值）。
+
+要注意的是，reset() 不會移除 form array 中的控制項，只會清空它們的值。
+
+### form array 的相關方法
+
+- at()：formArray.at(index) 可取得 form array 中指定索引位置的控制項。
+- removeAt()：formArray.removeAt(index) 可刪除 form array 中指定索引的控制項。
+- push()：formArray.push(control) 可動態新增控制項至 form array 尾端。
+
+## 使用 Reactive Forms
+
+要在頁面上建立 form group，需要先注入 FormBuilder 這個 service，並記得在元件或模組中 import ReactiveFormsModule。FormBuilder 是 Angular 官方提供的語法糖，可以簡化建立 FormControl、FormGroup、FormArray 實例的過程。  
+
+假設現在有一張繳費單，裡面有姓名、電話、住址和數筆費用明細。  
+
+以 Reactive Forms 表示，整張繳費單是一個 form group。姓名、電話、住址這些單獨輸入的欄位，各自是繳費單 form group 下的 form control。全部費用明細則是與前述控制項同層的 form array。  
+
+每筆明細又有消費日期、項目名稱、金額等細目，所以每筆明細是 form array 中的一個 form group，細目則是該 form group 下的 form control。
+
+### 示例：
+
+```TS
+import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-expense-form',
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './expense-form.component.html',
+})
+export class ExpenseFormComponent implements OnInit {
+  form!: FormGroup;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit() {
+    this.initForm();
+  }
+
+  initForm() {
+    this.form = this.fb.group({
+      name: [null],
+      phone: [null],
+      address: [null],
+      detail: this.fb.array([]),
+    });
+  }
+
+  // 方便在 ts 與 html 中取得費用明細的 form array
+  get detail(): FormArray {
+    return this.form.get('detail') as FormArray;
+  }
+}
+```
+
+接下來就用這張繳費單，把前面提到的方法實際套用一次。  
+
+#### 新增、刪除費用明細：push()、removeAt()
+每筆明細的結構都相同，所以先寫一個建立明細 form group 的方法，新增時直接 push() 進 form array，刪除時用 removeAt() 傳入索引即可。
+
+```ts
+createDetail(): FormGroup {
+  return this.fb.group({
+    date: [null],
+    item: [null],
+    amount: [null],
+  });
+}
+
+addDetail() {
+  this.detail.push(this.createDetail());
+}
+
+removeDetail(index: number) {
+  this.detail.removeAt(index);
+}
+```
+
+在 html 中，form array 用 formArrayName 綁定，每筆明細則以索引用 [formGroupName] 綁定：  
+
+```html
+<form [formGroup]="form">
+  <input formControlName="name" />
+  <input formControlName="phone" />
+  <input formControlName="address" />
+
+  <div formArrayName="detail">
+    @for (item of detail.controls; track $index; let i = $index) {
+      <div [formGroupName]="i">
+        <input type="date" formControlName="date" />
+        <input formControlName="item" />
+        <input type="number" formControlName="amount" />
+        <button type="button" (click)="removeDetail(i)">刪除</button>
+      </div>
+    }
+  </div>
+
+  <button type="button" (click)="addDetail()">新增明細</button>
+</form>
+```
+
+#### 複製某筆明細：at()
+
+如果想讓使用者快速複製某一筆明細，可以先用 `at()` 取得該筆的控制項，再用 `getRawValue()` 拿到它的值（即使該筆被 disabled 也拿得到），最後 `setValue()` 到新的明細並 `push()` 進去。  
+
+這裡用 `setValue()` 是因為兩筆明細的結構完全相同，剛好符合它「必須完整」的限制。
+
+```ts
+copyDetail(index: number) {
+  const source = this.detail.at(index).getRawValue();
+  const newDetail = this.createDetail();
+  newDetail.setValue(source);
+  this.detail.push(newDetail);
+}
+```
+
+#### 帶入既有資料：patchValue() 與 setControl()
+實務上常見的情境是從 API 取得一張已存在的繳費單，再帶回表單。  
+
+姓名、電話、住址用 patchValue() 帶入即可，就算 API 回傳的物件多了其他欄位或少了某個欄位，也不會報錯。  
+
+但`patchValue()`只會更新 form array 中已存在的控制項，不會自動幫你新增。  
+所以如果 API 回傳三筆明細，而 form array 目前是空的，明細是帶不進去的。  
+這時就可以用`setControl()`，直接以新的 form array 替換掉原本的 detail。
+
+```ts
+loadData(data: any) {
+  this.form.patchValue({
+    name: data.name,
+    phone: data.phone,
+    address: data.address,
+  });
+
+  const details = data.detail.map((d: any) => {
+    const group = this.createDetail();
+    group.patchValue(d);
+    return group;
+  });
+
+  this.form.setControl('detail', this.fb.array(details));
+}
+```
+#### 動態增加欄位：addControl()
+
+假設繳費單有一個「需要開立統編」的選項，勾選後才需要填寫統一編號，就可以用 `addControl()` 動態加入控制項，取消勾選時再用 `removeControl()` 移除。
+
+因為 `addControl()` 在名稱已存在時不會覆蓋，重複勾選也不用擔心原本填的值被洗掉。
+
+```ts
+onNeedTaxIdChange(need: boolean) {
+  if (need) {
+    this.form.addControl('taxId', this.fb.control(null));
+  } else {
+    this.form.removeControl('taxId');
+  }
+}
+```
+
+#### 檢視模式：disable() / enable()
+
+當繳費單送出後進入檢視狀態，只要一行 `this.form.disable()` 就能讓整張表單不可編輯，不需要每個元件各自設定 disabled。  
+
+如果只是某個欄位不可修改，例如住址不能改，也可以單獨針對該 form control 設定。
+
+```ts
+setViewMode(isView: boolean) {
+  isView ? this.form.disable() : this.form.enable();
+}
+
+lockAddress() {
+  this.form.get('address')?.disable();
+}
+```
+
+#### 送出與重置：getRawValue()、reset()
+
+送出時，如果有欄位被 disabled（例如上面鎖住的住址），用 this.form.value 會少掉這個欄位，所以這裡使用 **getRawValue()** 取得完整的值。  
+
+送出後用 `reset()` 重置表單。  
+
+前面提到 reset() 不會移除 form array 中的控制項，所以**明細要另外用 clear() 清空**。
+
+```ts
+submit() {
+  const payload = this.form.getRawValue();
+  // 呼叫 API 送出 payload ...
+
+  this.form.reset();
+  this.detail.clear();
+}
+```
+
+
+
